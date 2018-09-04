@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io('http://localhost:3000'); // 和服务器建立链接
+    // socket.on('news',function (data) {
+    //   console.log(data);
+    //   socket.emit('my other event', {my:'data'})
+    // })
+
+    window.onload = function () {
+      var oBtn = document.getElementById('button');
+      oBtn.onclick = function () {
+        // 客户端 - 给服务器发送数据
+        // 第一个参数表示广播的名称， 第二个参数表示广播的数据
+        socket.emit('addcart', {
+          client: '我是客户端'
+        });
+      }
+
+      // 监听服务器发送过来的广播
+      socket.on('to-client', function (data) {
+        console.log(data);
+      })
+
+    }
+  </script>
+</head>
+<body>
+客户端
+<button id="button">给服务器发送数据</button>
+</body>
+</html>
