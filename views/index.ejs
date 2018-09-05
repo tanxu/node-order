@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src='/jquery.js'></script>
+	<script src="http://192.168.1.107:8000/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<input type="text" id="msg">
+	<br>
+	<button id="send">发送</button>
+
+	<script>
+		$(function () {
+			// 和服务器建立连接
+			var socket = io.connect('http://192.168.1.107:8000')
+
+			$('#send').click(function () {
+				var msg = $('#msg').val()
+
+				// 把获取的值发给服务器
+				socket.emit('reqMessage', msg)
+			})
+
+
+
+
+			// 监听服务器发送过来的数据
+			socket.on('resMessage', function (data) {
+				console.log(data)
+			})
+
+		})
+	</script>
+</body>
+</html>
