@@ -1,6 +1,9 @@
 var express = require('express')
 var app = express()
 
+// 引入 db 库
+var DB = require('./module/db')
+
 // 第一步 初始化
 var server = require('http').Server(app)
 var io = require('socket.io')(server)
@@ -27,22 +30,12 @@ io.on('connection', function (socket) {
 	console.log('建立连接')
 
 	socket.on('reqMessage', function (data) {
-		console.log(data)
-
-
-		// 模拟机器人聊天
-		if(data==1){
-			var msg = '您当前的花费有2元'
-		}else if(data==2){
-			var msg = '您当前的流量有20M'
-		}else{
-			var msg = '请输入正确的信息'
-		}
-
-		// 服务器给客户端发送数据
-		socket.emit('resMessage', msg) // 机器人
-
-		// io.emit()  群发-聊天室
-
+		var msg = data.msg||'';  // 获取客户端的数据
+		// 去服务器查询数据  查询article这个collection   第二个参数条件
+		DB.find('article',{title:{$regex:new RegExp(msg)}},{'title':''},function (err, data) {
+			socket.emit('resMessage', {
+				result: data
+			})
+		})
 	})
 })

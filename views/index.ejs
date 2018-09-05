@@ -5,22 +5,84 @@
 	<title>Document</title>
 	<script src='/jquery.js'></script>
 	<script src="http://192.168.1.107:8000/socket.io/socket.io.js"></script>
+	<style>
+		.box{
+			width: 300px;
+			height: 400px;
+			margin: 200px auto;
+			border: 1px solid #666;
+			position: relative;
+		}
+		.list{
+			width: 300px;
+			height: 360px;
+			overflow-y: scroll;
+		}
+		.message{
+			height: 40px;
+			display: flex;
+			border-top: 1px solid #666;
+			box-sizing:border-box;
+		}
+		.message input{
+			height: 100%;
+			border: none;
+			padding: 0;
+			outline: none;
+			margin: 0;
+			box-sizing:border-box;
+		}
+		.message input[type='text']{
+			flex: 1;
+			padding: 0 10px;
+			border-right: 1px solid #666;
+		}
+		.message input[type='button']{
+			width: 80px;
+		}
+	</style>
 </head>
 <body>
-	<input type="text" id="msg">
-	<br>
-	<button id="send">发送</button>
+	<div class="box">
+		<div class="list" id="list"></div>
+		<div class="message">
+			<input type="text" id="msg">
+			<input type="button" id="send" value="发送">
+		</div>
+	</div>
 
 	<script>
 		$(function () {
 			// 和服务器建立连接
 			var socket = io.connect('http://192.168.1.107:8000')
+			socket.on('resMessage', function (data) {
+				var res = data.result;
+				var str = ''
+				if(res){
+					str = '<ul>'
+					res.map(item=>{
+						str+='<li>'+ item.title +'</li>'
+					})
+					str+='</ul>';
+				}else{
+					str='<p>搜索的数据不存在，请联系人工客服</p>'
+				}
+				
+			})
 
+			$('#list').append(str);
 			$('#send').click(function () {
 				var msg = $('#msg').val()
-
+				var username=`zhangsan${Math.floor(Math.random()*100)}`;
 				// 把获取的值发给服务器
-				socket.emit('reqMessage', msg)
+				socket.emit('reqMessage', {
+					username: username,
+					msg: msg
+				})
+
+				$('#list').append(`<p><strong>${username}<strong>  :  ${msg}</p>`)
+				$('#msg').val('');
+
 			})
 
 
