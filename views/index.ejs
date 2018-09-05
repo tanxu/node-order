@@ -44,7 +44,10 @@
 </head>
 <body>
 	<div class="box">
-		<div class="list" id="list"></div>
+		<div class="list">
+			<div id="list"></div>
+			<div id="list-footer"></div>
+		</div>
 		<div class="message">
 			<input type="text" id="msg">
 			<input type="button" id="send" value="发送">
@@ -67,13 +70,13 @@
 				}else{
 					str='<p>搜索的数据不存在，请联系人工客服</p>'
 				}
-				
 			})
-
 			$('#list').append(str);
+			$('#list-footer').get(0).scrollIntoView();  // 让滚动条始终处于最底部
+
+			var username=`zhangsan${Math.floor(Math.random()*100)}`;
 			$('#send').click(function () {
 				var msg = $('#msg').val()
-				var username=`zhangsan${Math.floor(Math.random()*100)}`;
 				// 把获取的值发给服务器
 				socket.emit('reqMessage', {
 					username: username,
